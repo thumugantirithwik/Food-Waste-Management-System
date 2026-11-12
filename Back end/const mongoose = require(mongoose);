@@ -1,0 +1,46 @@
+const mongoose = require("mongoose");
+
+const wasteReportSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
+
+    wasteType: {
+        type: String,
+        required: true
+    },
+
+    quantity: {
+        type: Number,
+        required: true,
+        min: 1
+    },
+
+    location: {
+        type: String,
+        required: true
+    },
+
+    description: {
+        type: String,
+        default: ""
+    },
+
+    status: {
+        type: String,
+        enum: [
+            "Reported",
+            "Collected",
+            "Processed"
+        ],
+        default: "Reported"
+    }
+
+}, {
+    timestamps: true
+});
+
+module.exports = mongoose.model("WasteReport", wasteReportSchema);

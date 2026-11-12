@@ -1,0 +1,159 @@
+const express = require(express);
+
+const WasteReport =
+    require(..modelsWasteReport);
+
+const router = express.Router();
+
+
+ =============================
+ CREATE WASTE REPORT
+ =============================
+
+router.post(, async (req, res) = {
+
+    try {
+
+        const report = new WasteReport({
+
+            name
+                req.body.name,
+
+            wasteType
+                req.body.wasteType,
+
+            quantity
+                req.body.quantity,
+
+            location
+                req.body.location,
+
+            description
+                req.body.description
+
+        });
+
+
+        const savedReport =
+            await report.save();
+
+
+        res.status(201).json({
+
+            message Waste report submitted successfully,
+
+            report savedReport
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            message Waste report failed,
+
+            error error.message
+
+        });
+
+    }
+
+});
+
+
+ =============================
+ GET WASTE REPORTS
+ =============================
+
+router.get(, async (req, res) = {
+
+    try {
+
+        const reports =
+            await WasteReport
+                .find()
+                .sort({ createdAt -1 });
+
+
+        res.json(reports);
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            message Could not fetch reports,
+
+            error error.message
+
+        });
+
+    }
+
+});
+
+
+ =============================
+ UPDATE WASTE STATUS
+ =============================
+
+router.put(idstatus, async (req, res) = {
+
+    try {
+
+        const report =
+            await WasteReport.findByIdAndUpdate(
+
+                req.params.id,
+
+                {
+                    status req.body.status
+                },
+
+                {
+                    new true
+                }
+
+            );
+
+
+        if (!report) {
+
+            return res.status(404).json({
+
+                message Report not found
+
+            });
+
+        }
+
+
+        res.json({
+
+            message Waste report status updated,
+
+            report
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            message Status update failed,
+
+            error error.message
+
+        });
+
+    }
+
+});
+
+
+module.exports = router;

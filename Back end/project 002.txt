@@ -1,0 +1,35 @@
+#include<stdio.h>
+#include<conio.h>
+void main();
+            char s[5];
+            chscrs s;
+            printf("enter any operater");
+             gets s;
+             switch s[0];
+             case'>':if (s[1]=='=')
+             printf("\ngreater than or equal");
+             else
+             printf("greater than");
+             break;
+             case'<':if (s[1]=='=')
+             printf("\nless than or equal");
+             else
+             printf("less than");
+             break;
+             case'=':if s[1]=='=')
+             printf("\nequal");
+             else
+             printf("assingment");
+             break;
+             case'':if s[1]==
+             printf("\nnot equal");
+             else
+             printf("bit not");
+             break;
+             case'&':if (s[1]==&)
+             printf("\nlogical and");
+             else
+             printf("bitwise and");
+             break;
+             case'|':if s([1]=='|')
+             printf("")

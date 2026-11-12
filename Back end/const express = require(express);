@@ -1,0 +1,159 @@
+const express = require(express);
+
+const FoodRequest =
+    require(..modelsFoodRequest);
+
+const router = express.Router();
+
+
+ =============================
+ CREATE REQUEST
+ =============================
+
+router.post(, async (req, res) = {
+
+    try {
+
+        const request = new FoodRequest({
+
+            requesterName
+                req.body.requesterName,
+
+            phone
+                req.body.phone,
+
+            requiredFood
+                req.body.requiredFood,
+
+            requiredMeals
+                req.body.requiredMeals,
+
+            deliveryLocation
+                req.body.deliveryLocation
+
+        });
+
+
+        const savedRequest =
+            await request.save();
+
+
+        res.status(201).json({
+
+            message Food request submitted successfully,
+
+            request savedRequest
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            message Food request failed,
+
+            error error.message
+
+        });
+
+    }
+
+});
+
+
+ =============================
+ GET REQUESTS
+ =============================
+
+router.get(, async (req, res) = {
+
+    try {
+
+        const requests =
+            await FoodRequest
+                .find()
+                .sort({ createdAt -1 });
+
+
+        res.json(requests);
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            message Could not fetch requests,
+
+            error error.message
+
+        });
+
+    }
+
+});
+
+
+ =============================
+ UPDATE STATUS
+ =============================
+
+router.put(idstatus, async (req, res) = {
+
+    try {
+
+        const request =
+            await FoodRequest.findByIdAndUpdate(
+
+                req.params.id,
+
+                {
+                    status req.body.status
+                },
+
+                {
+                    new true
+                }
+
+            );
+
+
+        if (!request) {
+
+            return res.status(404).json({
+
+                message Request not found
+
+            });
+
+        }
+
+
+        res.json({
+
+            message Request status updated,
+
+            request
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            message Status update failed,
+
+            error error.message
+
+        });
+
+    }
+
+});
+
+
+module.exports = router;
