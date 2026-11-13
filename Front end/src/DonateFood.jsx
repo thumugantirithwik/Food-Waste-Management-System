@@ -22,7 +22,7 @@ function DonateFood() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/food/donate",
+        "http://localhost:5001/api/food/donate",
         {
           method: "POST",
           headers: {
@@ -48,6 +48,7 @@ function DonateFood() {
       }
 
     } catch (error) {
+      console.error(error);
       alert("Food donation failed");
     }
   };

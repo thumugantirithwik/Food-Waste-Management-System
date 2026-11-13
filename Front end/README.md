@@ -1,16 +1,55 @@
-# React + Vite
+# 🍱 Food Waste Management System — Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the React client interface for the Food Waste Management System built with Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Framework**: React 19
+- **Build Tool**: Vite 8
+- **UI Components**:
+  - Landing / Home page with platform overview & metrics
+  - User Authentication (Login, Register with Role Selection, Profile)
+  - Food Marketplace (Discover and browse available food listings)
+  - Donation Management (Submit listings, upload details, track requests)
+  - Request Workflow (Submit claims, donor approval/rejection, status progression)
+  - Admin & Role Dashboards (View metrics, requests, and listings)
+- **Responsive Styling**: Pure responsive CSS with custom theme variables.
 
-## React Compiler
+## Directory Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+Front end/
+├── public/                 # Static assets, favicon, icons
+├── src/
+│   ├── api/                # API client modules for backend endpoints
+│   ├── components/         # Reusable buttons, cards, modals, navigation
+│   │   ├── common/
+│   │   ├── dashboard/
+│   │   └── layout/
+│   ├── context/            # Auth and notification React contexts
+│   ├── hooks/              # Custom hooks
+│   ├── pages/              # Primary views
+│   ├── utils/              # Constants, helpers, date formatters
+│   ├── App.jsx             # Main view router and navigation
+│   ├── main.jsx            # Entry point
+│   ├── style.css           # Global theme styling
+│   └── index.css           # Reset & base styles
+├── index.html
+├── package.json
+└── vite.config.js
+```
 
-## Expanding the ESLint configuration
+## Setup & Running
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Run Development Server
+```bash
+npm run dev
+```
+
+The frontend application will be accessible at `http://localhost:5173`.
+Ensure the backend server is running on `http://localhost:5000` to handle API requests.

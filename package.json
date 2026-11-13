@@ -1,0 +1,17 @@
+{
+  "name": "food-waste-management-system",
+  "version": "1.0.0",
+  "description": "Food Waste Management System",
+  "private": true,
+  "scripts": {
+    "start": "npm run start --prefix \"Back end\"",
+    "backend": "npm run start --prefix \"Back end\"",
+    "backend:dev": "npm run dev --prefix \"Back end\"",
+    "frontend": "npm run dev --prefix \"Front end\"",
+    "seed": "npm run seed --prefix \"Back end\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+

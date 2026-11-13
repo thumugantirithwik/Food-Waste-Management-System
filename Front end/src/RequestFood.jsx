@@ -19,7 +19,7 @@ function RequestFood({ food }) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/requests/request",
+        "http://localhost:5001/api/requests/request",
         {
           method: "POST",
           headers: {
@@ -47,6 +47,7 @@ function RequestFood({ food }) {
       }
 
     } catch (error) {
+      console.error(error);
       alert("Food request failed");
     }
   };

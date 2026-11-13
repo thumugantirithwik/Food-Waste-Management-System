@@ -4,7 +4,7 @@ function ViewRequests() {
   const [requests, setRequests] = useState([]);
 
   const loadRequests = () => {
-    fetch("http://localhost:5000/api/requests/all")
+    fetch("http://localhost:5001/api/requests/all")
       .then((response) => response.json())
       .then((data) => setRequests(data))
       .catch(() => alert("Failed to load food requests"));
@@ -17,7 +17,7 @@ function ViewRequests() {
   const updateRequest = async (id, action) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/requests/${action}/${id}`,
+        `http://localhost:5001/api/requests/${action}/${id}`,
         {
           method: "PUT"
         }
@@ -32,6 +32,7 @@ function ViewRequests() {
       }
 
     } catch (error) {
+      console.error(error);
       alert("Failed to update request");
     }
   };

@@ -1,79 +1,32 @@
-const express = require("express");
-const User = require("../models/User");
-
+const express = require('express');
 const router = express.Router();
+const {
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  verifyUser,
+  suspendUser,
+  changePassword,
+} = require('../controllers/userController');
+const { register, login } = require('../controllers/authController');
+const { protect, authorize } = require('../middleware/auth');
 
-router.post("/register", async (req, res) => {
-    try {
-        const { name, email, password, phone } = req.body;
+// Support /api/users/login and /api/users/register for direct frontend compatibility
+router.post('/login', login);
+router.post('/register', register);
 
-        const existingUser = await User.findOne({ email });
+// Change password route (must be before /:id to avoid conflicts)
+router.put('/change-password', protect, changePassword);
 
-        if (existingUser) {
-            return res.status(400).json({
-                message: "Email already registered"
-            });
-        }
+// Admin routes
+router.get('/', protect, authorize('admin'), getAllUsers);
+router.delete('/:id', protect, authorize('admin'), deleteUser);
+router.put('/:id/verify', protect, authorize('admin'), verifyUser);
+router.put('/:id/suspend', protect, authorize('admin'), suspendUser);
 
-        const newUser = new User({
-            name,
-            email,
-            password,
-            phone
-        });
+// General user routes
+router.get('/:id', protect, getUserById);
+router.put('/:id', protect, updateUser);
 
-        await newUser.save();
-
-        res.status(201).json({
-            message: "User registered successfully",
-            user: {
-                id: newUser._id,
-                name: newUser.name,
-                email: newUser.email,
-                phone: newUser.phone
-            }
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Registration failed",
-            error: error.message
-        });
-    }
-});
-router.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(400).json({
-                message: "User not found"
-            });
-        }
-
-        if (user.password !== password) {
-            return res.status(400).json({
-                message: "Invalid password"
-            });
-        }
-
-        res.status(200).json({
-            message: "Login successful",
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone
-            }
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Login failed",
-            error: error.message
-        });
-    }
-});
 module.exports = router;

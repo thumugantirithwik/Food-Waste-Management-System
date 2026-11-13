@@ -17,7 +17,7 @@ function App() {
     return (
       <>
         <Navbar setPage={setPage} />
-        <Register />
+        <Register setPage={setPage} />
       </>
     );
   }

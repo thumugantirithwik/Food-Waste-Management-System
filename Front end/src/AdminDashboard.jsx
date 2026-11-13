@@ -5,12 +5,12 @@ function AdminDashboard() {
   const [requests, setRequests] = useState([]);
 
   const loadData = () => {
-    fetch("http://localhost:5000/api/food/available")
+    fetch("http://localhost:5001/api/food/available")
       .then((response) => response.json())
       .then((data) => setDonations(data))
       .catch(() => alert("Failed to load donations"));
 
-    fetch("http://localhost:5000/api/requests/all")
+    fetch("http://localhost:5001/api/requests/all")
       .then((response) => response.json())
       .then((data) => setRequests(data))
       .catch(() => alert("Failed to load requests"));

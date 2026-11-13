@@ -6,7 +6,7 @@ function AvailableFood() {
   const [selectedFood, setSelectedFood] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/food/available")
+    fetch("http://localhost:5001/api/food/available")
       .then((response) => response.json())
       .then((data) => setDonations(data))
       .catch(() => alert("Failed to load food donations"));

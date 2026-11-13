@@ -1,119 +1,153 @@
-const express = require("express");
-const FoodRequest = require("../models/FoodRequest");
-const FoodDonation = require("../models/FoodDonation");
-
+const express = require('express');
 const router = express.Router();
+const FoodRequest = require('../models/FoodRequest');
+const FoodDonation = require('../models/FoodDonation');
+const {
+  createRequest,
+  getAllRequests,
+  getMyRequests,
+  getRequestsForDonor,
+  getRequestById,
+  approveRequest,
+  rejectRequest,
+  cancelRequest,
+  markCollected,
+  markDelivered,
+  completeRequest,
+} = require('../controllers/requestController');
+const { protect, authorize } = require('../middleware/auth');
 
-// Request food
-router.post("/request", async (req, res) => {
-    try {
-        const {
-            foodId,
-            requesterName,
-            phone,
-            quantityRequested
-        } = req.body;
+// === Backward Compatibility for Simple Frontend ===
 
-        const food = await FoodDonation.findById(foodId);
+// GET /api/requests/all
+router.get('/all', async (req, res) => {
+  try {
+    const requests = await FoodRequest.find()
+      .populate('foodId')
+      .populate('donation')
+      .sort({ createdAt: -1 });
 
-        if (!food) {
-            return res.status(404).json({
-                message: "Food donation not found"
-            });
-        }
-
-        const request = new FoodRequest({
-            foodId,
-            requesterName,
-            phone,
-            quantityRequested
-        });
-
-        await request.save();
-
-        res.status(201).json({
-            message: "Food request submitted successfully",
-            request
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Food request failed",
-            error: error.message
-        });
-    }
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get food requests',
+      error: error.message,
+    });
+  }
 });
 
-// Get all food requests
-router.get("/all", async (req, res) => {
-    try {
-        const requests = await FoodRequest.find()
-            .populate("foodId");
+// POST /api/requests/request
+router.post('/request', async (req, res) => {
+  try {
+    const { foodId, donationId, requesterName, phone, quantityRequested } = req.body;
+    const targetFoodId = foodId || donationId;
 
-        res.status(200).json(requests);
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to get food requests",
-            error: error.message
-        });
+    const food = await FoodDonation.findById(targetFoodId);
+    if (!food) {
+      return res.status(404).json({
+        success: false,
+        message: 'Food donation not found',
+      });
     }
+
+    const request = new FoodRequest({
+      foodId: targetFoodId,
+      donation: targetFoodId,
+      requesterName,
+      phone,
+      requesterPhone: phone,
+      quantityRequested,
+      status: 'Pending',
+    });
+
+    await request.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Food request submitted successfully',
+      request,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Food request failed',
+      error: error.message,
+    });
+  }
 });
 
-// Accept a food request
-router.put("/accept/:id", async (req, res) => {
-    try {
-        const request = await FoodRequest.findByIdAndUpdate(
-            req.params.id,
-            { status: "Accepted" },
-            { new: true }
-        );
+// PUT /api/requests/accept/:id
+router.put('/accept/:id', async (req, res) => {
+  try {
+    const request = await FoodRequest.findByIdAndUpdate(
+      req.params.id,
+      { status: 'Accepted', approvedAt: new Date() },
+      { new: true }
+    );
 
-        if (!request) {
-            return res.status(404).json({
-                message: "Food request not found"
-            });
-        }
-
-        res.status(200).json({
-            message: "Food request accepted successfully",
-            request
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to accept request",
-            error: error.message
-        });
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: 'Food request not found',
+      });
     }
+
+    res.status(200).json({
+      success: true,
+      message: 'Food request accepted successfully',
+      request,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to accept request',
+      error: error.message,
+    });
+  }
 });
 
-// Reject a food request
-router.put("/reject/:id", async (req, res) => {
-    try {
-        const request = await FoodRequest.findByIdAndUpdate(
-            req.params.id,
-            { status: "Rejected" },
-            { new: true }
-        );
+// PUT /api/requests/reject/:id
+router.put('/reject/:id', async (req, res) => {
+  try {
+    const request = await FoodRequest.findByIdAndUpdate(
+      req.params.id,
+      { status: 'Rejected' },
+      { new: true }
+    );
 
-        if (!request) {
-            return res.status(404).json({
-                message: "Food request not found"
-            });
-        }
-
-        res.status(200).json({
-            message: "Food request rejected successfully",
-            request
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to reject request",
-            error: error.message
-        });
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: 'Food request not found',
+      });
     }
+
+    res.status(200).json({
+      success: true,
+      message: 'Food request rejected successfully',
+      request,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to reject request',
+      error: error.message,
+    });
+  }
 });
+
+// === Role-Based Protected REST API Routes ===
+router.get('/my', protect, authorize('ngo', 'admin'), getMyRequests);
+router.get('/for-donor', protect, authorize('donor', 'admin'), getRequestsForDonor);
+router.get('/', protect, authorize('admin'), getAllRequests);
+router.get('/:id', protect, getRequestById);
+router.post('/', protect, authorize('ngo', 'admin'), createRequest);
+router.put('/:id/approve', protect, authorize('donor', 'admin'), approveRequest);
+router.put('/:id/reject', protect, authorize('donor', 'admin'), rejectRequest);
+router.put('/:id/cancel', protect, authorize('ngo', 'admin'), cancelRequest);
+router.put('/:id/mark-collected', protect, authorize('volunteer', 'donor', 'admin'), markCollected);
+router.put('/:id/mark-delivered', protect, authorize('volunteer', 'admin'), markDelivered);
+router.put('/:id/complete', protect, authorize('admin', 'donor'), completeRequest);
 
 module.exports = router;
